@@ -21,7 +21,7 @@ public interface RecipeApi {
     Call<RecipeSearchResponse> searchRecipe(
         @Query("query") String query, // first appends a ?
         //can replace maxfat with something more relevant
-        @Query("maxFat") int page, // second and beyond append an & sign
+        @Query("maxFat") int maxFat, // second and beyond append an & sign
         @Query("number") int number,
         @Query("apiKey") String apiKey
     );
