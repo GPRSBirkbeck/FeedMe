@@ -5,6 +5,7 @@ import com.example.feedme.requests.responses.RecipeSearchResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RecipeApi {
@@ -27,8 +28,11 @@ public interface RecipeApi {
     );
 
     //GET RECIPE REQUEST
+    //Below the @Path is used to provide the parameter for the recipenumber needed in the middle of the response query,
+    //Whilst @Query is used for the ?X after the api
     @GET("recipes/{recipeNumber}/information")
     Call<RecipeResponse> getRecipe(
+            @Path("recipeNumber") int recipeNumber,
             @Query("apiKey") String apiKey
     );
 
