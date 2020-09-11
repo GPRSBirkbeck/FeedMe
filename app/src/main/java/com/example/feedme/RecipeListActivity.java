@@ -15,6 +15,7 @@ import com.example.feedme.requests.ServiceGenerator;
 import com.example.feedme.requests.responses.RecipeResponse;
 import com.example.feedme.requests.responses.RecipeSearchResponse;
 import com.example.feedme.util.Constants;
+import com.example.feedme.util.Testing;
 import com.example.feedme.viewmodels.RecipeListViewModel;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class RecipeListActivity extends BaseActivity {
         subScribeObservers();
         findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 testRetrofitGetRequest();
             }
         });
@@ -51,9 +52,8 @@ public class RecipeListActivity extends BaseActivity {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
                 if(recipes!= null){
-                    for(Recipe recipe: recipes){
-                        Log.d(TAG, "onChanged: "+ recipe.getTitle());
-                    }
+                    Testing.printRecipes(recipes, "recipes test");
+
                 }
             }
         });

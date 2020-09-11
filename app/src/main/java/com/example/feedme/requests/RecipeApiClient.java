@@ -33,14 +33,10 @@ public class RecipeApiClient {
         }
         return instance;
     }
-    private RecipeApiClient(){
-        mRecipes = new MutableLiveData<>();
-
-    }
+    private RecipeApiClient(){ mRecipes = new MutableLiveData<>(); }
     public LiveData<List<Recipe>> getRecipes(){
         return mRecipes;
     }
-
     public void searchRecipesApi(String query, int maxFat, int number){
         if(mRetrieveRecipesRunnable != null){
             mRetrieveRecipesRunnable = null;
@@ -76,7 +72,7 @@ public class RecipeApiClient {
 
         //this run is responsible for running the query
         @Override
-        public void run() {
+            public void run() {
             //THIS is the actual line of code that will run on the background thread
             try {
                 Response response = getRecipes(query,maxFat,number).execute();
