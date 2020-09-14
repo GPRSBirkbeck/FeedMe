@@ -18,8 +18,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Recipe> mRecipes;
     private OnRecipeListener onRecipeListener;
 
-    public RecyclerViewAdapter(List<Recipe> mRecipes, OnRecipeListener onRecipeListener) {
-        this.mRecipes = mRecipes;
+    public RecyclerViewAdapter(OnRecipeListener onRecipeListener) {
         this.onRecipeListener = onRecipeListener;
     }
 
@@ -37,18 +36,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 .placeholder(R.drawable.ic_launcher_background);
         Glide.with(holder.itemView.getContext())
                 .setDefaultRequestOptions(requestOptions)
-                .load(mRecipes.get(position))
+                .load(mRecipes.get(position).getImage())
                 .into(((RecipeViewHolder)holder).imageView);
 
         //TODO study this and figure out how to bring this across to the ratesAPP
         ((RecipeViewHolder)holder).title.setText(mRecipes.get(position).getTitle());
-        ((RecipeViewHolder)holder).id.setText(mRecipes.get(position).getId());
+        ((RecipeViewHolder)holder).id.setText(Integer.toString(mRecipes.get(position).getId()));
 
     }
 
     @Override
     public int getItemCount() {
-        return mRecipes.size();
+        if(mRecipes != null){
+            return mRecipes.size();
+        }
+        return 0;
     }
 
     //TODO add one of these for ratesApp

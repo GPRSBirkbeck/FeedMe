@@ -4,12 +4,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.feedme.adapters.OnRecipeListener;
+import com.example.feedme.adapters.RecyclerViewAdapter;
 import com.example.feedme.models.Recipe;
 import com.example.feedme.requests.RecipeApi;
 import com.example.feedme.requests.ServiceGenerator;
@@ -27,11 +30,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RecipeListActivity extends BaseActivity {
+public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
     private static final String TAG = "RecipeListActivity";
 
     private RecipeListViewModel mRecipeListViewModel;
     private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,9 @@ public class RecipeListActivity extends BaseActivity {
 
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
 
+        initRecylcerView();
         subScribeObservers();
+        testRetrofitGetRequest();
     }
 
     public void subScribeObservers(){
@@ -50,13 +56,16 @@ public class RecipeListActivity extends BaseActivity {
             public void onChanged(@Nullable List<Recipe> recipes) {
                 if(recipes!= null){
                     Testing.printRecipes(recipes, "recipes test");
-
+                    mRecyclerViewAdapter.setRecipes(recipes);
                 }
             }
         });
     }
 
     private void initRecylcerView(){
+        mRecyclerViewAdapter = new RecyclerViewAdapter(this);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
@@ -67,5 +76,15 @@ public class RecipeListActivity extends BaseActivity {
 
     private void testRetrofitGetRequest(){
         searchRecipesApi("pasta",25,14);
+    }
+
+    @Override
+    public void onRecipeClick(int position) {
+
+    }
+
+    @Override
+    public void onCategoryClick(String category) {
+
     }
 }
