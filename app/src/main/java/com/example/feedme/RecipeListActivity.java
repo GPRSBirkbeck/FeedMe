@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -30,21 +31,17 @@ public class RecipeListActivity extends BaseActivity {
     private static final String TAG = "RecipeListActivity";
 
     private RecipeListViewModel mRecipeListViewModel;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
+        mRecyclerView = findViewById(R.id.recipe_list);
 
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
 
         subScribeObservers();
-        findViewById(R.id.test).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                testRetrofitGetRequest();
-            }
-        });
     }
 
     public void subScribeObservers(){
@@ -57,6 +54,10 @@ public class RecipeListActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void initRecylcerView(){
+
     }
 
     //method below takes inputs for our repository search method
