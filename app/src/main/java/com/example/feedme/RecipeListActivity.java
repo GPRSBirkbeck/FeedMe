@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.example.feedme.adapters.OnRecipeListener;
 import com.example.feedme.adapters.RecyclerViewAdapter;
@@ -47,7 +48,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
         initRecylcerView();
         subScribeObservers();
-        testRetrofitGetRequest();
+        initSearchView();
     }
 
     public void subScribeObservers(){
@@ -68,15 +69,22 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
+    private void initSearchView(){
+        final SearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mRecipeListViewModel.searchRecipesApi(query,25,14);
+                return false;
+            }
 
-    //method below takes inputs for our repository search method
-    public void searchRecipesApi(String query, int maxFat, int number){
-        mRecipeListViewModel.searchRecipesApi(query, maxFat, number);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
-    private void testRetrofitGetRequest(){
-        searchRecipesApi("pasta",25,14);
-    }
 
     @Override
     public void onRecipeClick(int position) {
