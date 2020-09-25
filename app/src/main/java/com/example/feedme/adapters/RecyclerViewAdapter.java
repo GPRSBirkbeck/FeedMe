@@ -1,5 +1,6 @@
 package com.example.feedme.adapters;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.feedme.R;
 import com.example.feedme.models.Recipe;
+import com.example.feedme.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static final int RECIPE_TYPE = 1;
     private static final int LOADING_TYPE = 2;
+    private static final int CATEGORY_TYPE = 3;
 
     private List<Recipe> mRecipes;
     private OnRecipeListener onRecipeListener;
@@ -42,6 +45,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case LOADING_TYPE:{
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_list_item, parent, false);
                 return new LoadingViewHolder(view);
+            }
+            case CATEGORY_TYPE:{
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_category_list_item, parent, false);
+                return new CategoryViewHolder(view, onRecipeListener);
             }
             default:{
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recipe_list_item, parent, false);
@@ -67,10 +74,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((RecipeViewHolder)holder).title.setText(mRecipes.get(position).getTitle());
             ((RecipeViewHolder)holder).id.setText(Integer.toString(mRecipes.get(position).getId()));
         }
+        else if(itemViewType == CATEGORY_TYPE){
+            RequestOptions requestOptions = new RequestOptions()
+                    //TODO replace the placeholder image with a feedme logo.
+                    .placeholder(R.drawable.ic_launcher_background);
+
+            Uri path = Uri.parse("android.resource://com.example.feedme/drawable/" + mRecipes.get(position).getImage());
+            Glide.with(holder.itemView.getContext())
+                    .setDefaultRequestOptions(requestOptions)
+                    .load(path)
+                    .into(((CategoryViewHolder)holder).circleImageView);
+
+            //TODO study this and figure out how to bring this across to the ratesAPP
+            ((CategoryViewHolder)holder).title.setText(mRecipes.get(position).getTitle());
+        }
     }
     @Override
     public int getItemViewType(int position){
-        if(mRecipes.get(position).getTitle().equals("LOADING...")){
+        if(mRecipes.get(position).getId()==-1){
+            return CATEGORY_TYPE;
+        }
+        else if(mRecipes.get(position).getTitle().equals("LOADING...")){
             return  LOADING_TYPE;
         }
         else{
@@ -99,8 +123,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
         }
-
         return false;
+    }
+
+    public void displaySearchCategories(){
+        List<Recipe> categories = new ArrayList<>();
+        for(int i = 0; i< Constants.DEFAULT_SEARCH_CATEGORIES.length; i++){
+            Recipe recipe = new Recipe();
+            recipe.setTitle(Constants.DEFAULT_SEARCH_CATEGORIES[i]);
+            recipe.setImage(Constants.DEFAULT_SEARCH_CATEGORY_IMAGES[i]);
+            //the below is our marker that we are working with categories, not results
+            recipe.setId(-1);
+            categories.add(recipe);
+        }
+        mRecipes = categories;
+        notifyDataSetChanged();
     }
 
     @Override

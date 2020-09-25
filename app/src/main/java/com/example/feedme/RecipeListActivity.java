@@ -49,6 +49,10 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         initRecylcerView();
         subScribeObservers();
         initSearchView();
+        if(!mRecipeListViewModel.isViewingRecipes()){
+            //if it isnt viewing recipes, display search categories;
+            displaySearchCategories();
+        }
     }
 
     public void subScribeObservers(){
@@ -95,6 +99,12 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
     @Override
     public void onCategoryClick(String category) {
+        mRecyclerViewAdapter.displayLoading();
+        mRecipeListViewModel.searchRecipesApi(category,25,14);
+    }
 
+    private void displaySearchCategories(){
+        mRecipeListViewModel.setIsViewingRecipes(false);
+        mRecyclerViewAdapter.displaySearchCategories();
     }
 }

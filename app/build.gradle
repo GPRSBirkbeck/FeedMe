@@ -51,6 +51,9 @@ dependencies {
     //Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+    
+    //Circular imageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     //CoordinatorLayout
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
