@@ -21,6 +21,7 @@ import com.example.feedme.requests.responses.RecipeResponse;
 import com.example.feedme.requests.responses.RecipeSearchResponse;
 import com.example.feedme.util.Constants;
 import com.example.feedme.util.Testing;
+import com.example.feedme.util.VerticalSpacingItemDecorator;
 import com.example.feedme.viewmodels.RecipeListViewModel;
 
 import java.io.IOException;
@@ -37,12 +38,14 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     private RecipeListViewModel mRecipeListViewModel;
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
         mRecyclerView = findViewById(R.id.recipe_list);
+        mSearchView = findViewById(R.id.search_view);
 
         mRecipeListViewModel = new ViewModelProvider(this).get(RecipeListViewModel.class);
 
@@ -60,8 +63,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
                 if(recipes!= null){
-                    Testing.printRecipes(recipes, "recipes test");
-                    mRecyclerViewAdapter.setRecipes(recipes);
+                    if(mRecipeListViewModel.isViewingRecipes()){
+                        Testing.printRecipes(recipes, "recipes test");
+                        mRecipeListViewModel.setIsPerformingQuery(false);
+                        mRecyclerViewAdapter.setRecipes(recipes);
+                    }
                 }
             }
         });
@@ -70,17 +76,22 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     private void initRecylcerView(){
         mRecyclerViewAdapter = new RecyclerViewAdapter(this);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        VerticalSpacingItemDecorator verticalSpacingItemDecorator = new VerticalSpacingItemDecorator(30);
+        mRecyclerView.addItemDecoration(verticalSpacingItemDecorator);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
     private void initSearchView(){
-        final SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
                 mRecyclerViewAdapter.displayLoading();
                 mRecipeListViewModel.searchRecipesApi(query,25,14);
+                //TODO see how you can apply the clearFocus, as used below, to RatesApp,
+                // as this is super useful
+                mSearchView.clearFocus();
+
                 return false;
             }
 
@@ -101,10 +112,24 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     public void onCategoryClick(String category) {
         mRecyclerViewAdapter.displayLoading();
         mRecipeListViewModel.searchRecipesApi(category,25,14);
+        mSearchView.clearFocus();
     }
 
     private void displaySearchCategories(){
         mRecipeListViewModel.setIsViewingRecipes(false);
         mRecyclerViewAdapter.displaySearchCategories();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //method is called every time the back button is called in this activity
+        if(mRecipeListViewModel.isBackPressed()){
+            //if this is true is means they are already looking at the category, so the default line below
+            //will lead them to exit the app
+            super.onBackPressed();
+        }
+        else{
+            displaySearchCategories();
+        }
     }
 }

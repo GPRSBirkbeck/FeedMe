@@ -13,9 +13,9 @@ import java.util.List;
 public class RecipeListViewModel extends ViewModel {
     private RecipeRepository mRecipeRepository;
     private boolean mIsViewingRecipes;
+    private boolean mIsPerformingQuery;
 
     public RecipeListViewModel(){
-        mIsViewingRecipes = false;
         mRecipeRepository = RecipeRepository.getInstance();
     }
 
@@ -27,6 +27,7 @@ public class RecipeListViewModel extends ViewModel {
     //method below takes inputs for our repository search method
     public void searchRecipesApi(String query, int maxFat, int number){
         mIsViewingRecipes = true;
+        mIsPerformingQuery = true;
         mRecipeRepository.searchRecipesApi(query, maxFat, number);
     }
 
@@ -36,5 +37,27 @@ public class RecipeListViewModel extends ViewModel {
 
     public void setIsViewingRecipes(boolean isViewingRecipes) {
         mIsViewingRecipes = isViewingRecipes;
+    }
+
+    public void setIsPerformingQuery(boolean isPerformingQuery){
+        mIsPerformingQuery = isPerformingQuery;
+    }
+
+    public boolean getIsPerformingQuery(){
+        return mIsPerformingQuery;
+    }
+
+    public boolean isBackPressed(){
+        if(mIsPerformingQuery){
+            // cancel the query
+            mRecipeRepository.cancelRequest();
+            mIsPerformingQuery = false;
+
+        }
+        if(mIsViewingRecipes){
+            mIsViewingRecipes = false;
+            return false;
+        }
+        return true;
     }
 }

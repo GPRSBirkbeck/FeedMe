@@ -37,4 +37,9 @@ public class RecipeRepository {
         }
         mRecipeApiClient.searchRecipesApi(query, maxFat, number);
     }
+
+    public void cancelRequest(){
+        mRecipeApiClient.cancelRequest();
+
+    }
 }
